@@ -13,7 +13,7 @@ class VkAPI
    public $image_path='';
    public static $config=array(
        'client_id'=>'6155983',
-       'redirect_uri'=>'https://oauth.vk.com/blank.html',
+       'redirect_uri'=> 'https://oauth.vk.com/blank.html',
        'protectedKey'=>'5iAFDZE5WdOcBNUcTXOa',
        'scope'=>'messages,wall');
 
@@ -28,9 +28,9 @@ class VkAPI
 
     public static function autorization()
     {
-       // header('HTTP/1.1 301 Moved Permanently');
-       echo  'Location: https://oauth.vk.com/authorize?client_id='.VkAPI::$config["client_id"].'&redirect_uri='.VkAPI::$config["redirect_uri"].'&response_type=token&v=5.67&scope='.implode(',', VkAPI::$access);
-        // header('Location: https://oauth.vk.com/authorize?client_id='.VkAPI::$config["client_id"].'&redirect_uri='.VkAPI::$config["redirect_uri"].'&response_type=code&v=5.67&scope='.VkAPI::$config["scope"]);
+        header('HTTP/1.1 301 Moved Permanently');
+       //echo  'Location: https://oauth.vk.com/authorize?client_id='.VkAPI::$config["client_id"].'&redirect_uri='.VkAPI::$config["redirect_uri"].'&response_type=token&v=5.67&scope='.implode(',', VkAPI::$access);
+        header('Location: https://oauth.vk.com/authorize?client_id='.VkAPI::$config["client_id"].'&redirect_uri='.VkAPI::$config["redirect_uri"].'&response_type=token&v=5.67&display=popup&scope='.implode(',', VkAPI::$access));
     }
 
     public function getAccessToken(){
@@ -108,6 +108,15 @@ class VkAPI
 
         echo '<br><br>';
         echo "https://api.vk.com/method/photos.saveWallPhoto?access_token=".$this->accessToken.'&v=5.67&user_id='.$this->user_id.'&photo='.$output->photo.'&server='.$output->server.'&hash='.$output->hash;
+        echo '<br><br>';
+        var_dump($server->response[0]->id);
+
+
+
+        $server= json_decode(file_get_contents("https://api.vk.com/method/wall.post?access_token=".$this->accessToken.'&v=5.67&owner_id='.$this->user_id.'&attachments=photo'.$this->user_id.'_'.$server->response[0]->id));
+
+        echo '<br><br>';
+        echo '<br><br>';
         var_dump($server);
 
     }

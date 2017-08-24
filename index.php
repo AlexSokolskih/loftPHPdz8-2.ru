@@ -10,13 +10,14 @@ include_once 'vkapi.php';
 
 
 
-//VkAPI::autorization();
+VkAPI::autorization();
 
-$vk = new VkAPI();
-$vk->user_id=374378008;
+/*$vk = new VkAPI();
+//$vk->user_id=374378008;
+$vk->user_id=17855170;
 
 $vk ->addImage();
-
+*/
 
 
 ?>
