@@ -15,7 +15,8 @@ class VkAPI
        'client_id'=>'6155983',
        'redirect_uri'=> 'https://oauth.vk.com/blank.html',
        'protectedKey'=>'5iAFDZE5WdOcBNUcTXOa',
-       'scope'=>'messages,wall');
+       'scope'=>'messages,wall',
+       'user_id' => '374378008');
 
     public static $access=['messages','photos','friends','wall','offline'];
 
@@ -28,7 +29,7 @@ class VkAPI
 
     public static function autorization()
     {
-        header('HTTP/1.1 301 Moved Permanently');
+        header('HTTP/1.1 302 Moved');
        //echo  'Location: https://oauth.vk.com/authorize?client_id='.VkAPI::$config["client_id"].'&redirect_uri='.VkAPI::$config["redirect_uri"].'&response_type=token&v=5.67&scope='.implode(',', VkAPI::$access);
         header('Location: https://oauth.vk.com/authorize?client_id='.VkAPI::$config["client_id"].'&redirect_uri='.VkAPI::$config["redirect_uri"].'&response_type=token&v=5.67&display=popup&scope='.implode(',', VkAPI::$access));
     }
@@ -75,7 +76,7 @@ class VkAPI
     public function addImage()
     {
        $server= json_decode(file_get_contents("https://api.vk.com/method/photos.getWallUploadServer?access_token=".$this->accessToken.'&v=5.67'));
-      var_dump($server->response);
+
 
 
         $ch = curl_init();
@@ -90,15 +91,12 @@ class VkAPI
         $post = array(
             "photo"=>new CURLFile($_SERVER['DOCUMENT_ROOT']."/img/12.jpg")
         );
-        var_dump($post);
 
         curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
 
         $output = curl_exec($ch);
         $output=json_decode($output);
 
-        echo '<br><br>';
-        var_dump($output);
 
 // 4. закрываем соединение
         curl_close($ch);
@@ -106,18 +104,19 @@ class VkAPI
 
         $server= json_decode(file_get_contents("https://api.vk.com/method/photos.saveWallPhoto?access_token=".$this->accessToken.'&v=5.67&user_id='.$this->user_id.'&photo='.$output->photo.'&server='.$output->server.'&hash='.$output->hash));
 
-        echo '<br><br>';
-        echo "https://api.vk.com/method/photos.saveWallPhoto?access_token=".$this->accessToken.'&v=5.67&user_id='.$this->user_id.'&photo='.$output->photo.'&server='.$output->server.'&hash='.$output->hash;
-        echo '<br><br>';
-        var_dump($server->response[0]->id);
 
 
-
-        $server= json_decode(file_get_contents("https://api.vk.com/method/wall.post?access_token=".$this->accessToken.'&v=5.67&owner_id='.$this->user_id.'&attachments=photo'.$this->user_id.'_'.$server->response[0]->id));
+        $server2= json_decode(file_get_contents("https://api.vk.com/method/wall.post?access_token=".$this->accessToken.'&v=5.67&owner_id='.VkAPI::$config["user_id"].'&attachments=photo'.$this->user_id.'_'.$server->response[0]->id));
 
         echo '<br><br>';
-        echo '<br><br>';
-        var_dump($server);
+        echo "https://api.vk.com/method/wall.post?access_token=".$this->accessToken.'&v=5.67&owner_id='.VkAPI::$config["user_id"].'&attachments=photo'.$this->user_id.'_'.$server->response[0]->id;
+        if( property_exists($server2, 'error')) {
+            echo '<br>Ошибка при размещении фото:'.$server2->error->error_msg.'<br>';
+        }
+        else {
+            echo '<br>Фото размещенно успешно<br>';
+        }
+
 
     }
 
